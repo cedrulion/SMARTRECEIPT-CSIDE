@@ -1,35 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaUpload } from 'react-icons/fa';
 
 const Information = () => {
-  const initialValues = {
-    businessProfile: '',
+  const [initialValues, setInitialValues] = useState({
     basicInformation: '',
-    businessRole: '',
     businessCategory: '',
     businessName: '',
-    mapLocation: '',
-    tinNumber: '',
-  };
+    businessLocation: '',
+    businessTINNumber: '',
+  });
+
+  useEffect(() => {
+    const fetchBusinessInformation = async () => {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await axios.get('http://localhost:5000/api/business/info', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        });
+
+        if (response.status === 200) {
+          setInitialValues({
+            basicInformation: response.data.basicInformation,
+            businessCategory: response.data.businessCategory,
+            businessName: response.data.businessName,
+            businessLocation: response.data.businessLocation,
+            businessTINNumber: response.data.businessTINNumber,
+          });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        toast.error('Server error');
+      }
+    };
+
+    fetchBusinessInformation();
+  }, []);
 
   const validationSchema = Yup.object().shape({
-    businessProfile: Yup.string().required('Business profile is required'),
     basicInformation: Yup.string().required('Business basic information is required'),
-    businessRole: Yup.string().required('Business role is required'),
     businessCategory: Yup.string().required('Business category is required'),
     businessName: Yup.string().required('Business name is required'),
-    mapLocation: Yup.string().required('Business map location is required'),
-    tinNumber: Yup.string().required('Business TIN number is required'),
+    businessLocation: Yup.string().required('Business map location is required'),
+    businessTINNumber: Yup.string().required('Business TIN number is required'),
   });
 
   const onSubmit = async (values) => {
+    const token = localStorage.getItem('token');
     try {
-      const response = await axios.post('http://localhost:5000/api/business/add', values);
+      const response = await axios.post('http://localhost:5000/api/business/add', values, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      });
 
       if (response.status === 200) {
         toast.success('Business information added successfully!');
@@ -44,6 +74,7 @@ const Information = () => {
 
   const formik = useFormik({
     initialValues,
+    enableReinitialize: true,
     validationSchema,
     onSubmit,
   });
@@ -52,15 +83,10 @@ const Information = () => {
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-6">Business Information</h2>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center mb-6">
-          <FaUpload className="text-xl mr-2" />
-          <span>Upload Business profile</span>
-          <span className="ml-auto text-sm text-gray-500">Ensure images uploaded are not greater than 2mb each.</span>
-        </div>
         <form onSubmit={formik.handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-gray-700">Business basic Information</label>
+              <label className="block text-gray-700">Business Basic Information</label>
               <textarea
                 name="basicInformation"
                 value={formik.values.basicInformation}
@@ -74,21 +100,7 @@ const Information = () => {
                 <div className="text-red-500">{formik.errors.basicInformation}</div>
               ) : null}
             </div>
-            <div>
-              <label className="block text-gray-700">Business Role</label>
-              <input
-                type="text"
-                name="businessRole"
-                value={formik.values.businessRole}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessRole && formik.errors.businessRole ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="0813 614 3905"
-              />
-              {formik.touched.businessRole && formik.errors.businessRole ? (
-                <div className="text-red-500">{formik.errors.businessRole}</div>
-              ) : null}
-            </div>
+
             <div>
               <label className="block text-gray-700">Business Category</label>
               <input
@@ -123,30 +135,30 @@ const Information = () => {
               <label className="block text-gray-700">Business Map Location</label>
               <input
                 type="text"
-                name="mapLocation"
-                value={formik.values.mapLocation}
+                name="businessLocation"
+                value={formik.values.businessLocation}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.mapLocation && formik.errors.mapLocation ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessLocation && formik.errors.businessLocation ? 'border-red-500' : 'border-gray-300'}`}
                 placeholder="Enter business map location"
               />
-              {formik.touched.mapLocation && formik.errors.mapLocation ? (
-                <div className="text-red-500">{formik.errors.mapLocation}</div>
+              {formik.touched.businessLocation && formik.errors.businessLocation ? (
+                <div className="text-red-500">{formik.errors.businessLocation}</div>
               ) : null}
             </div>
             <div>
               <label className="block text-gray-700">Business TIN Number</label>
               <input
                 type="text"
-                name="tinNumber"
-                value={formik.values.tinNumber}
+                name="businessTINNumber"
+                value={formik.values.businessTINNumber}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.tinNumber && formik.errors.tinNumber ? 'border-red-500' : 'border-gray-300'}`}
+                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessTINNumber && formik.errors.businessTINNumber ? 'border-red-500' : 'border-gray-300'}`}
                 placeholder="Enter business TIN number"
               />
-              {formik.touched.tinNumber && formik.errors.tinNumber ? (
-                <div className="text-red-500">{formik.errors.tinNumber}</div>
+              {formik.touched.businessTINNumber && formik.errors.businessTINNumber ? (
+                <div className="text-red-500">{formik.errors.businessTINNumber}</div>
               ) : null}
             </div>
           </div>
@@ -163,4 +175,3 @@ const Information = () => {
 };
 
 export default Information;
-

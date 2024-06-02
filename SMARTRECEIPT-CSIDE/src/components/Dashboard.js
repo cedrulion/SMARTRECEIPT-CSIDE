@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FaArrowUp, FaArrowDown, FaCheckCircle, FaSync, FaTimesCircle } from 'react-icons/fa';
 import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
@@ -7,13 +8,76 @@ import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 const Dashboard = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [countsPerMonth, setCountsPerMonth] = useState(Array(12).fill(0));
+  const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const token = localStorage.getItem('token');
+
+      try {
+        // Fetch all transactions
+        const transactionsResponse = await axios.get('http://localhost:5000/api/transaction/transactions/get', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+        });
+        setTransactions(transactionsResponse.data);
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  useEffect(() => {
+    const fetchCountsPerMonth = async () => {
+      const token = localStorage.getItem('token');
+
+      try {
+        // Fetch transaction counts per month based on date range
+        const countsPerMonthResponse = await axios.get('http://localhost:5000/api/transaction/count-per-month', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          params: {
+            startDate,
+            endDate
+          }
+        });
+        setCountsPerMonth(countsPerMonthResponse.data.countsPerMonth.map(item => item.count));
+        console.log(countsPerMonthResponse.data.countsPerMonth.map(item => item.count));
+
+      } catch (error) {
+        console.error('Error fetching counts per month:', error);
+      }
+    };
+
+    
+      fetchCountsPerMonth();
+    
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   // Data for the chart
   const data = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
       {
-        label: 'Statistics',
-        data: [120, 190, 30, 50, 200, 300, 250, 400, 320, 280, 290, 340],
+        label: 'Transactions',
+        data: countsPerMonth,
         fill: true,
         backgroundColor: 'rgba(75,192,192,0.2)',
         borderColor: 'rgba(75,192,192,1)',
@@ -55,6 +119,20 @@ const Dashboard = () => {
       </div>
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h3 className="text-lg font-semibold mb-4">Statistics</h3>
+        <div className="flex items-center mb-4">
+          <input 
+            type="date" 
+            value={startDate} 
+            onChange={(e) => setStartDate(e.target.value)} 
+            className="mr-2 p-2 border rounded" 
+          />
+          <input 
+            type="date" 
+            value={endDate} 
+            onChange={(e) => setEndDate(e.target.value)} 
+            className="mr-2 p-2 border rounded" 
+          />
+        </div>
         <Line data={data} options={options} />
       </div>
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -71,39 +149,26 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {[
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'Done' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'In progress' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'Done' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'Done' },
-              { name: 'DW', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'In progress' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'Cancelled' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'In progress' },
-              { name: 'Mumpacebia Dina', transaction: 'Shoes', paymentId: '#3086', date: 'Nov 28, 2023', amount: '10,000.00', status: 'In progress' },
-            ].map((transaction, index) => (
+            {transactions.map((transaction, index) => (
               <tr key={index} className="border-t">
                 <td className="py-2 flex items-center">
                   <img src="https://via.placeholder.com/40" alt="customer" className="w-10 h-10 rounded-full mr-2" />
-                  {transaction.name}
+                  {transaction.buyer.username}
                 </td>
-                <td className="py-2">{transaction.transaction}</td>
-                <td className="py-2">{transaction.paymentId}</td>
-                <td className="py-2">{transaction.date}</td>
-                <td className="py-2">{transaction.amount}</td>
+                <td className="py-2">{transaction.product.name}</td>
+                <td className="py-2">{transaction._id}</td>
+                <td className="py-2">{new Date(transaction.createdAt).toLocaleDateString()}</td>
+                <td className="py-2">${transaction.totalPrice.toFixed(2)}</td>
                 <td className="py-2">
-                  {transaction.status === 'Done' && <FaCheckCircle className="text-green-500" />}
-                  {transaction.status === 'In progress' && <FaSync className="text-yellow-500" />}
-                  {transaction.status === 'Cancelled' && <FaTimesCircle className="text-red-500" />}
+                  {transaction.status === 'succeeded' && <FaCheckCircle className="text-green-500" />}
+                  {transaction.status === 'pending' && <FaSync className="text-yellow-500" />}
+                  {transaction.status === 'failed' && <FaTimesCircle className="text-red-500" />}
                   <span className="ml-1">{transaction.status}</span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex justify-between items-center mt-4">
-          <button className="text-gray-500">&laquo; Previous</button>
-          <button className="text-gray-500">Next &raquo;</button>
-        </div>
       </div>
     </div>
   );

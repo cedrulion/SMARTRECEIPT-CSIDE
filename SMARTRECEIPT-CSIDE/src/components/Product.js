@@ -125,8 +125,8 @@ const Product = () => {
     <div className="container mx-auto p-4">
       <ToastContainer />
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Products</h1>
-        <button onClick={handleModalOpen} className="btn btn-primary">Add Product</button>
+        <h1 className="text-2xl font-bold"></h1>
+        <button onClick={handleModalOpen} className="btn btn-primary font-bold border-t">+ Add Product</button>
       </div>
       {loading ? (
         <p>Loading...</p>
@@ -151,8 +151,8 @@ const Product = () => {
                 <td className="py-2">{product.details}</td>
                 <td className="py-2">{product.unitPrice}</td>
                 <td className="py-2">
-                  <button onClick={() => deleteProduct(product._id)} className="btn btn-danger">Delete</button>
-                  <button onClick={() => handleUpdateModalOpen(product._id)} className="btn btn-warning ml-2">Edit</button>
+                  <button onClick={() => deleteProduct(product._id)} className="btn btn-danger bg-red-300 rounded px-2 py-2">Delete</button>
+                  <button onClick={() => handleUpdateModalOpen(product._id)} className="btn btn-warning ml-2 bg-blue-300 rounded px-2 py-2">Edit</button>
                 </td>
               </tr>
             ))}

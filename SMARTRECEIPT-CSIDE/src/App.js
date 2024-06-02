@@ -12,8 +12,12 @@ import Navbar from './components/Navbar';
 import RraLogin from './components/RraLogin';
 import Signup from './components/Signup';
 import Product from './components/Product';
-
-
+import Payment from './components/Payment';
+import TransactionList from './components/TransactionList';
+import BusinessList from './components/BusinessList';
+import Fail from './components/Fail';
+import Success from './components/Success';
+ 
 
 function App() {
   return (
@@ -35,6 +39,11 @@ function App() {
         <Route  path="message" element={<Message/>} />
         <Route  path="info" element={<Information/>} />
         <Route  path="product" element={<Product/>} />
+        <Route  path="payment" element={<Payment/>} />
+        <Route  path="list" element={<TransactionList/>} />
+        <Route  path="blist" element={<BusinessList/>} />
+         <Route  path="Success" element={<Success/>} />
+        <Route  path="Fail" element={<Fail/>} />
         </Route>
         </Routes>
     </Router>

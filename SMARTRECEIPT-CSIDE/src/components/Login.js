@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,9 +6,24 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Frame from '../Assets/Frame.png';
+import logo from '../Assets/Logo.png';
 
 const Login = () => {
+  const [isFocused, setIsFocused] = useState({
+    email: false,
+    password: false
+  });
+
   const navigate = useNavigate();
+
+  const handleFocus = (field) => {
+    setIsFocused({ ...isFocused, [field]: true });
+  };
+
+  const handleBlur = (field) => {
+    setIsFocused({ ...isFocused, [field]: false });
+  };
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -16,7 +31,6 @@ const Login = () => {
     },
   
     validationSchema: Yup.object({
-      
       email: Yup.string().email('Invalid email address').required('Email is required'),
       password: Yup.string().required('Password is required'),
     }),
@@ -26,11 +40,16 @@ const Login = () => {
 
         if (response.status === 200) {
           const { token } = response.data;
-        
-          localStorage.setItem('token', token );
+          localStorage.setItem('token', token);
+          localStorage.setItem('loggedInUser', JSON.stringify(response.data.loggedInUser)); // Store loggedInUser
           toast.success('Login successful!');
           console.log(token);
-          navigate('/dashboard');
+
+          // Log loggedInUser
+          const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+          console.log('loggedInUser:', loggedInUser);
+
+          navigate('/dashboard/dashboardd');
         } else {
           const data = response.data;
           toast.error(data.message || 'Login failed');
@@ -45,26 +64,29 @@ const Login = () => {
   });
 
   return (
-    <div className="flex items-center justify-center text-sm">
+    <div className="font-roboto flex items-center justify-center ">
       <div className="flex justify-between gap-16">
         <div className="flex items-center justify-center mb-8 ">
-        <img src={Frame} alt="logo" className="w-full h-auto object-cover rounded-lg shadow-md" />
+          <img src={Frame} alt="logo" className="w-full h-auto object-cover rounded-lg shadow-md" />
         </div>
         <div className="bg-white rounded-lg shadow-md m-9 p-6 border border-purple-300">
           <h2 className="text-2xl font-bold text-center mb-4">Welcome back</h2>
           <p className="text-center text-gray-600 mb-8">Enter details to log in and continue</p>
           <form onSubmit={formik.handleSubmit}>
-            
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 mb-2">
+            <div className="mb-4 relative">
+              <label 
+                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formik.values.email || isFocused.email ? 'hidden' : 'block'}`} 
+                htmlFor="email"
+              >
                 Email
               </label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                placeholder="Enter your email"
-                className={`w-full px-4 py-2 border ${
+                onFocus={() => handleFocus('email')}
+                onBlur={() => handleBlur('email')}
+                className={`w-full px-4 pt-4 pb-2 border ${
                   formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
                 {...formik.getFieldProps('email')}
@@ -73,16 +95,20 @@ const Login = () => {
                 <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
               )}
             </div>
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-700 mb-2">
+            <div className="mb-4 relative">
+              <label 
+                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formik.values.password || isFocused.password ? 'hidden' : 'block'}`} 
+                htmlFor="password"
+              >
                 Password
               </label>
               <input
                 type="password"
                 id="password"
                 name="password"
-                placeholder="Enter your password"
-                className={`w-full px-4 py-2 border ${
+                onFocus={() => handleFocus('password')}
+                onBlur={() => handleBlur('password')}
+                className={`w-full px-4 pt-4 pb-2 border ${
                   formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'
                 } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
                 {...formik.getFieldProps('password')}
@@ -109,18 +135,14 @@ const Login = () => {
           </form>
           <p className="text-center text-gray-600 mt-4">
             Don't have an account?{' '}
-            <a href="#" className="text-purple-600 hover:underline">
+            <Link to="/signup" className="text-purple-600 hover:underline">
               Sign up
-            </a>
+            </Link>
           </p>
           <div className="mt-6">
             <button className="w-full bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md flex items-center justify-center mb-2">
-              <img src="path/to/rra_logo.png" alt="RRA Logo" className="w-5 h-5 mr-2" />
-              Continue with RRA Credentials
-            </button>
-            <button className="w-full bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md flex items-center justify-center">
-              <img src="path/to/microsoft_logo.png" alt="Microsoft Logo" className="w-5 h-5 mr-2" />
-              Continue with Microsoft Account
+               <img src={logo} alt="logo" className="h-6" />
+              <Link to="/rra" ><h2> Continue with RRA Credentials </h2></Link>   
             </button>
           </div>
         </div>

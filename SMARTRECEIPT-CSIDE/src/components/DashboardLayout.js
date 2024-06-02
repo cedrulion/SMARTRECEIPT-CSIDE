@@ -16,7 +16,7 @@ const DashboardLayout = () => {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(isSidebarOpen);
   };
 
   const toggleDropdown = () => {
@@ -33,12 +33,7 @@ const DashboardLayout = () => {
       {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
 
       <div className={`flex-grow ${isSidebarOpen ? 'ml-56' : 'ml-0'}`}>
-      <div className="fixed top-0  pt-2">
-          <button className="text-black focus:outline-none text-2xl pt-5" onClick={toggleSidebar}>
-            <FaBars  />
-          </button>
-        </div>
-        <div className='font-Interi'>
+        <div className='font-roboto'>
           <Navbar/>
           <Outlet/>
           </div>
