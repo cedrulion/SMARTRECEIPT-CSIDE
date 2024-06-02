@@ -1,6 +1,7 @@
 // client/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import DashboardLayout from './components/DashboardLayout';
@@ -17,6 +18,7 @@ import TransactionList from './components/TransactionList';
 import BusinessList from './components/BusinessList';
 import Fail from './components/Fail';
 import Success from './components/Success';
+import NewLogin from './components/newLogin';
  
 
 function App() {
@@ -27,7 +29,7 @@ function App() {
        
         <Route  path="/login" element={<Login/>} ></Route>
         <Route  path="/signup" element={<Signup/>} ></Route>
-        <Route  path="/rra" element={<RraLogin/>} ></Route>
+        <Route  path="/rra" element={<Login/>} ></Route>
         
         <Route  path="/nav" element={<Navbar/>} ></Route>
         <Route  path="/sidebar" element={<Sidebar/>} ></Route>

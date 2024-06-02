@@ -36,7 +36,7 @@ const Transactions = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/transaction/transactions/get', {
+      const response = await axios.get('http://localhost:5000/api/transaction/get', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
@@ -81,7 +81,7 @@ const Transactions = () => {
 
   const handleAddTransaction = async () => {
     try {
-      await axios.post('http://localhost:5000/api/transaction/transactions/add', newTransaction, {
+      await axios.post('http://localhost:5000/api/transaction/add', newTransaction, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
@@ -173,7 +173,7 @@ const Transactions = () => {
   };
 
   return (
-    <div className="flex-1 p-6 bg-gray-100">
+    <div className="flex-1 p-6 bg-gray-100" style={{ fontFamily: 'inter' }}>
       <ToastContainer />
       <h1 className="text-2xl font-bold">Transactions</h1>
       <button onClick={() => setModalIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Add Transaction</button>

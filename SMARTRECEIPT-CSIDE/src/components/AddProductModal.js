@@ -40,7 +40,7 @@ const AddProductModal = ({ isOpen, onClose, onProductAdded }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center" style={{ fontFamily: 'inter' }}>
       <div className="bg-white p-8 rounded shadow-lg w-1/2">
         <h2 className="text-2xl font-bold mb-4">Add Product</h2>
         <form onSubmit={handleSubmit}>

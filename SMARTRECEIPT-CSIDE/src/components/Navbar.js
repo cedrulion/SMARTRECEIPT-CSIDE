@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaBell, FaCaretDown } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import HeaderComponent from './header';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -27,22 +28,17 @@ const Navbar = () => {
       </div>
       <div className="flex items-center relative">
         <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          <img
-            src="https://via.placeholder.com/150"
-            alt="User Avatar"
+          <div
             className="w-8 h-8 rounded-full mr-2"
-          />
+          >
+            <i className="fa-regular fa-user" style={{fontSize:"1.5em"}}></i>
+            </div>
           <span className="font-semibold">{loggedInUser.username}</span>
           <FaCaretDown className="ml-2" />
         </div>
         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              Logout
-            </button>
+          <div className="absolute right-0 top-full mt-2 z-10">
+            <HeaderComponent logout={handleLogout} />
           </div>
         )}
       </div>

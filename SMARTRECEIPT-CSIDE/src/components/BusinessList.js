@@ -23,7 +23,7 @@ const BusinessList = () => {
   const fetchBusinesses = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:5000/api/business/business', {
+      const response = await axios.get('http://localhost:5000/api/business/getall', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
@@ -85,7 +85,7 @@ const BusinessList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" style={{ fontFamily: 'inter' }}>
       <h2 className="text-2xl font-semibold my-4">Business List</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">

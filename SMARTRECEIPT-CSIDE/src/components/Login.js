@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +12,13 @@ const Login = () => {
     password: false
   });
 
+  const [formValues, setFormValues] = useState({
+    email: '',
+    password: ''
+  });
+
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleFocus = (field) => {
@@ -24,31 +29,42 @@ const Login = () => {
     setIsFocused({ ...isFocused, [field]: false });
   };
 
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-  
-    validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Email is required'),
-      password: Yup.string().required('Password is required'),
-    }),
-    onSubmit: async (values, { setSubmitting }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const validate = () => {
+    let errors = {};
+
+    if (!formValues.email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
+      errors.email = 'Invalid email address';
+    }
+
+    if (!formValues.password) {
+      errors.password = 'Password is required';
+    }
+
+    return errors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = validate();
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      setIsSubmitting(true);
       try {
-        const response = await axios.post('http://localhost:5000/api/user/login', values);
+        const response = await axios.post('http://localhost:5000/api/user/login', formValues);
 
         if (response.status === 200) {
           const { token } = response.data;
           localStorage.setItem('token', token);
           localStorage.setItem('loggedInUser', JSON.stringify(response.data.loggedInUser)); // Store loggedInUser
           toast.success('Login successful!');
-          console.log(token);
-
-          // Log loggedInUser
-          const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-          console.log('loggedInUser:', loggedInUser);
-
           navigate('/dashboard/dashboardd');
         } else {
           const data = response.data;
@@ -58,63 +74,67 @@ const Login = () => {
         console.error('Error:', error);
         toast.error('Server error');
       } finally {
-        setSubmitting(false);
+        setIsSubmitting(false);
       }
-    },
-  });
+    }
+  };
 
   return (
-    <div className="font-roboto flex items-center justify-center ">
+    <div className="flex items-center justify-center h-screen bg-gray-100" style={{ fontFamily: 'inter' }}>
       <div className="flex justify-between gap-16">
         <div className="flex items-center justify-center mb-8 ">
           <img src={Frame} alt="logo" className="w-full h-auto object-cover rounded-lg shadow-md" />
         </div>
-        <div className="bg-white rounded-lg shadow-md m-9 p-6 border border-purple-300">
+        <div className="bg-white rounded-lg shadow-md m-9 p-6 border rounded-xl  border-purple-300">
           <h2 className="text-2xl font-bold text-center mb-4">Welcome back</h2>
           <p className="text-center text-gray-600 mb-8">Enter details to log in and continue</p>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="mb-4 relative">
-              <label 
-                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formik.values.email || isFocused.email ? 'hidden' : 'block'}`} 
-                htmlFor="email"
-              >
-                Email
-              </label>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-6 relative">
               <input
                 type="email"
                 id="email"
                 name="email"
+                value={formValues.email}
+                onChange={handleChange}
                 onFocus={() => handleFocus('email')}
                 onBlur={() => handleBlur('email')}
-                className={`w-full px-4 pt-4 pb-2 border ${
-                  formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'
-                } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
-                {...formik.getFieldProps('email')}
+                placeholder=" "
+                className={`w-full px-4 pt-6 pb-2 border ${formErrors.email ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
               />
-              {formik.touched.email && formik.errors.email && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
+              <label
+                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formValues.email || isFocused.email ? 'text-xs -top-0.4 text-gray-500' : 'top-4'
+                  }`}
+                htmlFor="email"
+              >
+                Email
+              </label>
+              {formErrors.email && (
+                <div className="text-red-500 text-sm mt-0">{formErrors.email}</div>
               )}
             </div>
-            <div className="mb-4 relative">
-              <label 
-                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formik.values.password || isFocused.password ? 'hidden' : 'block'}`} 
-                htmlFor="password"
-              >
-                Password
-              </label>
+            <div className="mb-6 relative">
               <input
                 type="password"
                 id="password"
                 name="password"
+                value={formValues.password}
+                onChange={handleChange}
                 onFocus={() => handleFocus('password')}
                 onBlur={() => handleBlur('password')}
-                className={`w-full px-4 pt-4 pb-2 border ${
-                  formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'
-                } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
-                {...formik.getFieldProps('password')}
+                placeholder=" "
+                className={`w-full px-4 pt-6 pb-2 border ${formErrors.password ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600`}
               />
-              {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.password}</div>
+              <label
+                className={`absolute left-4 top-2 text-gray-700 transition-all duration-200 ${formValues.password || isFocused.password ? 'text-xs -top-0.4 text-gray-500' : 'top-4'
+                  }`}
+                htmlFor="password"
+              >
+                Password
+              </label>
+              {formErrors.password && (
+                <div className="text-red-500 text-sm mt-0">{formErrors.password}</div>
               )}
             </div>
             <div className="flex justify-between items-center mb-4">
@@ -125,24 +145,23 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className={`w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:bg-purple-700 ${
-                formik.isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={formik.isSubmitting}
+              className={`w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:bg-purple-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              disabled={isSubmitting}
             >
-              {formik.isSubmitting ? 'Logging in...' : 'Log In'}
+              {isSubmitting ? 'Logging in...' : 'Log In'}
             </button>
           </form>
-          <p className="text-center text-gray-600 mt-4">
-            Don't have an account?{' '}
+          <p className="text-center mt-4">
+            <span className='text-black font-medium'>Don't have an account?{' '}</span>
             <Link to="/signup" className="text-purple-600 hover:underline">
               Sign up
             </Link>
           </p>
           <div className="mt-6">
             <button className="w-full bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md flex items-center justify-center mb-2">
-               <img src={logo} alt="logo" className="h-6" />
-              <Link to="/rra" ><h2> Continue with RRA Credentials </h2></Link>   
+              <img src={logo} alt="logo" className="h-6" />
+              <Link to="/rra"><h2>Continue with RRA Credentials</h2></Link>
             </button>
           </div>
         </div>

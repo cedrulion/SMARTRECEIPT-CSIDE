@@ -26,7 +26,7 @@ const TransactionList = () => {
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/transaction/transactions/get', {
+        const response = await axios.get('http://localhost:5000/api/transaction/get', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: token,
@@ -58,7 +58,7 @@ const TransactionList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" style={{ fontFamily: 'inter' }}>
  
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-4">
