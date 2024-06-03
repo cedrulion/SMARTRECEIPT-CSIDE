@@ -179,19 +179,30 @@ const Transactions = () => {
       <button onClick={() => setModalIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded mt-4">Add Transaction</button>
       <button onClick={handleDownloadReceipt} className="bg-green-500 text-white px-4 py-2 rounded mt-4 ml-2">Download Receipt</button>
       <button onClick={handleExportReceipt} className="bg-purple-500 text-white px-4 py-2 rounded mt-4 ml-2">Export Receipt</button>
-      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles}>
-        <h2>Add New Transaction</h2>
+      <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)} style={customStyles} >
+        <div className="flex justify-between items-center mb-4 ">
+          <h2 className="text-lg font-semibold">Add transaction</h2>
+          <button onClick={() => setModalIsOpen(false)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
         <div className="my-4">
           <label htmlFor="tinNumber">TIN Number</label>
-          <input type="text" id="tinNumber" name="tinNumber" value={newTransaction.tinNumber} onChange={handleInputChange} />
+          <input type="text" id="tinNumber" name="tinNumber" value={newTransaction.tinNumber} onChange={handleInputChange} className="block w-full px-4 py-2 mt-2 text-sm text-gray-700 placeholder-gray-400 border rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Enter TIN Number" />
         </div>
         <div className="my-4">
           <label htmlFor="username">Username</label>
-          <input type="text" id="username" name="username" value={newTransaction.username} onChange={handleInputChange} />
+          <input type="text" id="username" name="username" value={newTransaction.username} onChange={handleInputChange} className="block w-full px-4 py-2 mt-2 text-sm text-gray-700 placeholder-gray-400 border rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Enter username" />
         </div>
         <div className="my-4">
           <label htmlFor="productId">Product</label>
-          <select id="productId" name="productId" value={newTransaction.productId} onChange={handleInputChange}>
+          <select id="productId" name="productId" value={newTransaction.productId} onChange={handleInputChange}
+            className="block w-full px-4 py-2 mt-2 text-sm text-gray-700 placeholder-gray-400 border rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+          >
             <option value="">Select Product</option>
             {products.map((product) => (
               <option key={product._id} value={product._id}>{product.name}</option>
@@ -200,7 +211,8 @@ const Transactions = () => {
         </div>
         <div className="my-4">
           <label htmlFor="quantity">Quantity</label>
-          <input type="number" id="quantity" name="quantity" value={newTransaction.quantity} onChange={handleInputChange} />
+          <input type="number" id="quantity" name="quantity" value={newTransaction.quantity} onChange={handleInputChange} className="block w-full px-4 py-2 mt-2 text-sm text-gray-700 placeholder-gray-400 border rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring-blue-500"
+            placeholder="Enter Quantityr" />
         </div>
         <button onClick={handleAddTransaction} className="bg-blue-500 text-white px-4 py-2 rounded">Add Transaction</button>
       </Modal>

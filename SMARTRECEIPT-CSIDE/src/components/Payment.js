@@ -14,7 +14,7 @@ const Payment = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/transaction/transactions/get', {
+      const response = await axios.get('http://localhost:5000/api/transaction/get', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
