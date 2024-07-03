@@ -39,7 +39,7 @@ const BusinessList = () => {
   const fetchBusinessById = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(`http://localhost:5000/api/business/business/${id}`, {
+      const response = await axios.get(`http://localhost:5000/api/business/getid/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,

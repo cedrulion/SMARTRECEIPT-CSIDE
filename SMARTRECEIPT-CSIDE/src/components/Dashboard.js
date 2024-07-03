@@ -20,7 +20,7 @@ const Dashboard = () => {
 
       try {
         // Fetch all transactions
-        const transactionsResponse = await axios.get('http://localhost:5000/api/transaction/transactions/get', {
+        const transactionsResponse = await axios.get('http://localhost:5000/api/transaction/get', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: token,
@@ -151,7 +151,13 @@ const Dashboard = () => {
                   <img src="https://via.placeholder.com/40" alt="customer" className="w-10 h-10 rounded-full mr-2" />
                   {transaction.buyer.username}
                 </td>
-                <td className="py-2">{transaction.product.name}</td>
+                <td className="border px-4 py-2">
+                    {transaction.products.map((product) => (
+                      <div key={product._id}>
+                        {product.product.name}
+                      </div>
+                    ))}
+                  </td>
                 <td className="py-2">{transaction._id}</td>
                 <td className="py-2">{new Date(transaction.createdAt).toLocaleDateString()}</td>
                 <td className="py-2">${transaction.totalPrice.toFixed(2)}</td>

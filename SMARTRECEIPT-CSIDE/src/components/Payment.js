@@ -101,7 +101,13 @@ const Payment = () => {
             <tbody>
               {currentTransactions.map((transaction) => (
                 <tr key={transaction._id}>
-                  <td className="px-6 py-4 border-b border-gray-200">{transaction.product.name}</td>
+                  <td className="border px-4 py-2">
+                    {transaction.products.map((product) => (
+                      <div key={product._id}>
+                        {product.product.name}
+                      </div>
+                    ))}
+                  </td>
                   <td className="px-6 py-4 border-b border-gray-200">{transaction.totalPrice}</td>
                   <td className="px-6 py-4 border-b border-gray-200">{new Date(transaction.date).toLocaleDateString()}</td>
                   <td className="px-6 py-4 border-b border-gray-200">
