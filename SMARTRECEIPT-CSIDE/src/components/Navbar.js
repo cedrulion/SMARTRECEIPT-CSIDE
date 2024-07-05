@@ -37,7 +37,7 @@ const Navbar = () => {
         />
       </div>
       <div className="flex items-center relative">
-        <Notification count={notificationCount} />
+        <Notification count={notificationCount} className="ml-2" />
         <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
           <div className="w-8 h-8 rounded-full mr-2">
             <i className="fa-regular fa-user" style={{fontSize:"1.5em"}}></i>
