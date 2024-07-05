@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { FaBell, FaCaretDown } from 'react-icons/fa';
+// src/components/Navbar.js
+import React, { useState, useEffect } from 'react';
+import { FaCaretDown } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import HeaderComponent from './header';
+import Notification from './Notification';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const count = localStorage.getItem('notificationCount');
+    if (count) {
+      setNotificationCount(parseInt(count, 10));
+    }
+  }, []);
 
   const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
 
@@ -27,12 +37,11 @@ const Navbar = () => {
         />
       </div>
       <div className="flex items-center relative">
+        <Notification count={notificationCount} />
         <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          <div
-            className="w-8 h-8 rounded-full mr-2"
-          >
+          <div className="w-8 h-8 rounded-full mr-2">
             <i className="fa-regular fa-user" style={{fontSize:"1.5em"}}></i>
-            </div>
+          </div>
           <span className="font-semibold">{loggedInUser.username}</span>
           <FaCaretDown className="ml-2" />
         </div>

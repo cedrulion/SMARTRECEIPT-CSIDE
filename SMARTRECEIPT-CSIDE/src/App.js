@@ -19,7 +19,7 @@ import BusinessList from './components/BusinessList';
 import Fail from './components/Fail';
 import Success from './components/Success';
 import NewLogin from './components/newLogin';
- 
+ import Notification from './components/Notification';
 
 function App() {
   return (
@@ -46,6 +46,7 @@ function App() {
         <Route  path="blist" element={<BusinessList/>} />
          <Route  path="Success" element={<Success/>} />
         <Route  path="Fail" element={<Fail/>} />
+         <Route  path="Notification" element={<Notification/>} />
         </Route>
         </Routes>
     </Router>
