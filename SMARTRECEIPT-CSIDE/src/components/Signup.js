@@ -209,7 +209,7 @@ const Signup = () => {
                                 className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600'
                             >
                                 <option value='BUSINESS'>Business</option>
-                                <option value='INDIVIDUAL'>Individual</option>
+                                <option value='EMPLOYEE'>Employee</option>
                             </select>
                         </div> */}
                         <div className="mb-2">

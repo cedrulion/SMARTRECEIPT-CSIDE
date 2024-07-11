@@ -87,6 +87,50 @@ const Sidebar = ({ onClose }) => {
             </Link>
           </>
         )}
+{userRole === 'EMPLOYEE' && (
+          <>
+           <Link
+              to="/dashboard/eproduct"
+              onClick={() => handleItemClick('/dashboard/product-catalog')}
+              className={`flex items-center p-2 mt-5 ${
+                activeItem === '/dashboard/product-catalog' ? 'bg-gray-200' : ''
+              }`}
+              style={{
+                paddingRight: activeItem === '/dashboard/product-catalog' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/product-catalog' ? '4px solid #8155ff' : '',
+              }}
+            >
+              <FaBoxes className="mr-3" /> Product Catalog
+            </Link>
+            <Link
+              to="/dashboard/etransactions"
+              onClick={() => handleItemClick('/dashboard/etransactions')}
+              className={`flex items-center p-2 mt-5 ${
+                activeItem === '/dashboard/etransactions' ? 'bg-gray-200' : ''
+              }`}
+              style={{
+                paddingRight: activeItem === '/dashboard/etransactions' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/etransactions' ? '4px solid #8155ff' : '',
+              }}
+            >
+              <FaReceipt className="mr-3" /> Transactions
+            </Link>
+           
+             <Link
+              to="/dashboard/payment"
+              onClick={() => handleItemClick('/dashboard/payment')}
+              className={`flex items-center p-2 mt-5 ${
+                activeItem === '/dashboard/payment' ? 'bg-gray-200' : ''
+              }`}
+              style={{
+                paddingRight: activeItem === '/dashboard/payment' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/payment' ? '4px solid #8155ff' : '',
+              }}
+            >
+              <FaBell className="mr-3" /> Payment Process
+            </Link>
+          </>
+        )}
         {userRole === 'BUSINESS' && (
           <>
             <Link
@@ -140,19 +184,6 @@ const Sidebar = ({ onClose }) => {
               }}
             >
               <FaCogs className="mr-3" /> Business Information
-            </Link>
-            <Link
-              to="/dashboard/payment"
-              onClick={() => handleItemClick('/dashboard/payment')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/payment' ? 'bg-gray-200' : ''
-              }`}
-              style={{
-                paddingRight: activeItem === '/dashboard/payment' ? '85px' : '',
-                borderLeft: activeItem === '/dashboard/payment' ? '4px solid #8155ff' : '',
-              }}
-            >
-              <FaBell className="mr-3" /> Payment Process
             </Link>
             <Link
               to="/dashboard/report"

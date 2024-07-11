@@ -9,10 +9,12 @@ import Information from './components/Information';
 import Message from './components/Message';
 import Sidebar from './components/Sidebar';
 import Transactions from './components/Transactions';
+import Etransactions from './components/Etransactions';
 import Navbar from './components/Navbar';
 import RraLogin from './components/RraLogin';
 import Signup from './components/Signup';
 import Product from './components/Product';
+import Eproduct from './components/Eproduct';
 import Payment from './components/Payment';
 import TransactionList from './components/TransactionList';
 import BusinessList from './components/BusinessList';
@@ -37,10 +39,12 @@ function App() {
        
         <Route  path="/dashboard" element={<DashboardLayout/>} >
         <Route  path="transactions" element={<Transactions/>} />
+        <Route  path="etransactions" element={<Etransactions/>} />
         <Route  path="dashboardd" element={<Dashboard/>} />
         <Route  path="message" element={<Message/>} />
         <Route  path="info" element={<Information/>} />
         <Route  path="product" element={<Product/>} />
+         <Route  path="eproduct" element={<Eproduct/>} />
         <Route  path="payment" element={<Payment/>} />
         <Route  path="list" element={<TransactionList/>} />
         <Route  path="blist" element={<BusinessList/>} />

@@ -21,7 +21,7 @@ const customStyles = {
   },
 };
 
-const Transactions = () => {
+const Etransactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -264,7 +264,12 @@ const Transactions = () => {
     <div className="container mx-auto mt-4">
       <ToastContainer />
       <h1 className="text-2xl font-bold mb-4">Transactions</h1>
-      
+      <button
+        onClick={() => setModalIsOpen(true)}
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+      >
+        Add Transaction
+      </button>
       {loading ? (
         <p>Loading transactions...</p>
       ) : (
@@ -419,5 +424,5 @@ const Transactions = () => {
   );
 };
 
-export default Transactions;
+export default Etransactions;
 
