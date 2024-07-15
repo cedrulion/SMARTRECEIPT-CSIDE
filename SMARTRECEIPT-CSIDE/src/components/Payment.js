@@ -13,8 +13,9 @@ const Payment = () => {
   const token = localStorage.getItem('token');
 
   const fetchTransactions = async () => {
+    const business = JSON.parse(localStorage.getItem('user')).business
     try {
-      const response = await axios.get('http://localhost:5000/api/transaction/get', {
+      const response = await axios.post('http://localhost:5000/api/transaction/get',{business}, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
@@ -81,42 +82,43 @@ const Payment = () => {
   };
 
   return (
-    <div className="flex-1 p-6 bg-gray-100">
+    <div className="flex-1 p-6 ">
       <ToastContainer />
-      <h1 className="text-2xl font-bold">Transactions</h1>
+      <h1 className="text-2xl font-bold">Payment processing</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <table className="min-w-full bg-white border border-gray-200 mt-4">
-            <thead>
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-100">
               <tr>
-                <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Product</th>
-                <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Payment</th>
-                <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Date</th>
-                <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Status</th>
-                <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Actions</th>
+                <th scope="col" className="px-6 py-3">Product</th>
+                <th scope="col" className="px-6 py-3">Payment</th>
+                <th scope="col" className="px-6 py-3">Date</th>
+                <th scope="col" className="px-6 py-3">Status</th>
+                <th scope="col" className="px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentTransactions.map((transaction) => (
-                <tr key={transaction._id}>
-                  <td className="border px-4 py-2">
+                <tr key={transaction._id} className="bg-white border-b hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {transaction.products.map((product) => (
                       <div key={product._id}>
                         {product.product.name}
                       </div>
                     ))}
                   </td>
-                  <td className="px-6 py-4 border-b border-gray-200">{transaction.totalPrice}</td>
-                  <td className="px-6 py-4 border-b border-gray-200">{new Date(transaction.date).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 border-b border-gray-200">
+                  <td className="px-6 py-4">{transaction.totalPrice}</td>
+                  <td className="px-6 py-4">{new Date(transaction.date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                       {getStatusIcon(transaction.status)}
                       <span className="ml-2">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 border-b border-gray-200">
+                  <td className="px-6 py-4">
                     {transaction.status === 'succeeded' ? (
                       <button className="bg-gray-500 text-white px-4 py-2 rounded">Done</button>
                     ) : (
@@ -127,6 +129,7 @@ const Payment = () => {
               ))}
             </tbody>
           </table>
+        </div>
           <div className="flex justify-between mt-4">
             <button onClick={handlePreviousPage} disabled={currentPage === 1} className="bg-gray-500 text-white px-4 py-2 rounded">
               Previous

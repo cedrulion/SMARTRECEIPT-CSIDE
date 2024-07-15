@@ -4,77 +4,78 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Product = () => {
-  const [products, setProducts] = useState([]);
+const UserManagement = () => {
+  const [users, setUsers] = useState([]);
   const [business, setBusiness] = useState()
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    productId: '',
-    quantity: 0,
-    details: '',
-    unitPrice: 0,
+  const [newUser, setNewUser] = useState({
+    username: '',
+    nID: '',
+    email: '',
+    role: 'EMPLOYEE',
   });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
-  const handleDeleteModalOpen = (product) => {
-    setProductToDelete(product);
+  const handleDeleteModalOpen = (user) => {
+    setUserToDelete(user);
     setIsDeleteModalOpen(true);
   };
 
   const handleDeleteModalClose = () => {
     setIsDeleteModalOpen(false);
-    setProductToDelete(null);
+    setUserToDelete(null);
   };
-  const [currentProduct, setCurrentProduct] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const token = localStorage.getItem('token');
-  const fetchProducts = async () => {
+  const fetchUsers = async () => {
     const busInfo = JSON.parse(localStorage.getItem("user")).business
     try {
-      const response = await axios.post('http://localhost:5000/api/product/getproducts', { business: busInfo }, {
+      const response = await axios.post('http://localhost:5000/api/user/get/employees', { business: busInfo }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
         },
       });
-      setProducts(response.data);
+      if (response.data.dataPresent === true) {
+        setUsers(response.data.users);
+      }
       setLoading(false);
     } catch (error) {
-      toast.error('Failed to fetch products');
+      toast.error('Failed to fetch users');
       setLoading(false);
     }
   };
 
-  const deleteProduct = async (id) => {
+  const deleteUser = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/product/delete/${id}`, {
+      await axios.post(`http://localhost:5000/api/user/delete/${id}`,{ business }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
         },
       });
-      toast.success('Product deleted successfully');
+      toast.success('user deleted successfully');
       setIsDeleteModalOpen(false)
-      fetchProducts();
+      fetchUsers();
     } catch (error) {
-      toast.error('Failed to delete product');
+      toast.error('Failed to delete user');
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
+    setNewUser((prevUsers) => ({
+      ...prevUsers,
       [name]: value,
     }));
   };
 
-  const handleAddProduct = async () => {
+  const handleAddUser = async () => {
     try {
-      await axios.post('http://localhost:5000/api/product/add', { ...newProduct, business: business }, {
+      await axios.post('http://localhost:5000/api/user/add/employee', { ...newUser, business: business }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
@@ -82,33 +83,32 @@ const Product = () => {
       });
       toast.success('Product added successfully');
       setIsAddModalOpen(false);
-      setNewProduct({
+      setNewUser({
         name: '',
-        productId: '',
-        quantity: 0,
-        details: '',
-        unitPrice: 0,
+        email: '',
+        nID: '',
+        role: 'EMPLOYEE',
       });
-      fetchProducts();
+      fetchUsers();
     } catch (error) {
-      toast.error('Error adding product');
+      toast.error('Error adding users');
     }
   };
 
-  const handleUpdateProduct = async () => {
+  const handleUpdateUser = async () => {
     try {
-      await axios.post('http://localhost:5000/api/product/update', { ...currentProduct }, {
+      await axios.post('http://localhost:5000/api/user/update/employee', { ...currentUser }, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: token,
         },
       });
-      toast.success('Product updated successfully');
+      toast.success('user updated successfully');
       setIsUpdateModalOpen(false);
-      setCurrentProduct(null);
-      fetchProducts();
+      setCurrentUser(null);
+      fetchUsers();
     } catch (error) {
-      toast.error('Error updating product');
+      toast.error('Error updating user');
     }
   };
 
@@ -120,18 +120,18 @@ const Product = () => {
     setIsAddModalOpen(false);
   };
 
-  const handleUpdateModalOpen = (product) => {
-    setCurrentProduct(product);
+  const handleUpdateModalOpen = (user) => {
+    setCurrentUser(user);
     setIsUpdateModalOpen(true);
   };
 
   const handleUpdateModalClose = () => {
     setIsUpdateModalOpen(false);
-    setCurrentProduct(null);
+    setCurrentUser(null);
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchUsers();
     const busInfo = JSON.parse(localStorage.getItem("user")).business
     setBusiness(busInfo)
   }, []);
@@ -151,35 +151,31 @@ const Product = () => {
             <thead className="text-xs text-gray-700 uppercase bg-gray-100">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Product name
+                  user name
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Product Id
+                  email
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Quantity
+                  nID
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  details
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Unit price
+                  role
                 </th>
                 <th scope="col" className="px-6 py-3">
                 </th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product._id} className="bg-white border-b hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{product.name}</td>
-                  <td className="px-6 py-4">{product.productId}</td>
-                  <td className="px-6 py-4">{product.quantity}</td>
-                  <td className="px-6 py-4">{product.details}</td>
-                  <td className="px-6 py-4">{product.unitPrice}</td>
+              {users.map((user) => (
+                <tr key={user._id} className="bg-white border-b hover:bg-gray-50">
+                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{user.username}</td>
+                  <td className="px-6 py-4">{user.email}</td>
+                  <td className="px-6 py-4">{user.nID}</td>
+                  <td className="px-6 py-4">{user.role}</td>
                   <td className="px-6 py-4">
-                    <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-5" style={{cursor:"pointer"}} onClick={() => handleUpdateModalOpen(product)}>Edit</a>
-                    <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-5" style={{cursor:"pointer"}}  onClick={() => handleDeleteModalOpen(product)}>Delete</a>
+                    <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-5" style={{ cursor: "pointer" }} onClick={() => handleUpdateModalOpen(user)}>Edit</a>
+                    <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-5" style={{ cursor: "pointer" }} onClick={() => handleDeleteModalOpen(user)}>Delete</a>
                   </td>
                 </tr>
               ))}
@@ -191,55 +187,35 @@ const Product = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
           <div className="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
             <div className="bg-blue-600 text-white p-4 rounded-t-md mb-4">
-              <h2 className="text-xl font-bold">Add New Product</h2>
+              <h2 className="text-xl font-bold">Add New user</h2>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block">Name</label>
                 <input
                   type="text"
-                  name="name"
-                  value={newProduct.name}
+                  name="username"
+                  value={newUser.name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border rounded-md"
                 />
               </div>
               <div>
-                <label className="block">Product ID</label>
+                <label className="block">Email</label>
                 <input
                   type="text"
-                  name="productId"
-                  value={newProduct.productId}
+                  name="email"
+                  value={newUser.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border rounded-md"
                 />
               </div>
               <div>
-                <label className="block">Quantity</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={newProduct.quantity}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block">Details</label>
+                <label className="block">National Identity</label>
                 <input
                   type="text"
-                  name="details"
-                  value={newProduct.details}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block">Unit Price</label>
-                <input
-                  type="number"
-                  name="unitPrice"
-                  value={newProduct.unitPrice}
+                  name="nID"
+                  value={newUser.nID}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border rounded-md"
                 />
@@ -253,10 +229,10 @@ const Product = () => {
                 Cancel
               </button>
               <button
-                onClick={handleAddProduct}
+                onClick={handleAddUser}
                 className="bg-blue-500 text-white px-4 py-2 rounded"
               >
-                Add Product
+                Add user
               </button>
             </div>
           </div>
@@ -266,7 +242,7 @@ const Product = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
           <div className="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
             <div className="bg-blue-600 text-white p-4 rounded-t-md mb-4">
-              <h2 className="text-xl font-bold">Update Product</h2>
+              <h2 className="text-xl font-bold">Update user</h2>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -274,48 +250,28 @@ const Product = () => {
                 <input
                   type="text"
                   name="name"
-                  value={currentProduct.name}
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, name: e.target.value })}
+                  value={currentUser.username}
+                  onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
                   className="w-full px-4 py-2 border rounded-md"
                 />
               </div>
               <div>
-                <label className="block">Product ID</label>
+                <label className="block">Email</label>
                 <input
                   type="text"
-                  name="productId"
-                  value={currentProduct.productId}
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, productId: e.target.value })}
+                  name="email"
+                  value={currentUser.email}
+                  onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
                   className="w-full px-4 py-2 border rounded-md"
                 />
               </div>
               <div>
-                <label className="block">Quantity</label>
+                <label className="block">National ID</label>
                 <input
                   type="number"
-                  name="quantity"
-                  value={currentProduct.quantity}
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, quantity: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block">Details</label>
-                <input
-                  type="text"
-                  name="details"
-                  value={currentProduct.details}
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, details: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-md"
-                />
-              </div>
-              <div>
-                <label className="block">Unit Price</label>
-                <input
-                  type="number"
-                  name="unitPrice"
-                  value={currentProduct.unitPrice}
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, unitPrice: e.target.value })}
+                  name="nID"
+                  value={currentUser.nID}
+                  onChange={(e) => setCurrentUser({ ...currentUser, nID: e.target.value })}
                   className="w-full px-4 py-2 border rounded-md"
                 />
               </div>
@@ -328,10 +284,10 @@ const Product = () => {
                 Cancel
               </button>
               <button
-                onClick={handleUpdateProduct}
+                onClick={handleUpdateUser}
                 className="bg-yellow-500 text-white px-4 py-2 rounded"
               >
-                Update Product
+                Update User
               </button>
             </div>
           </div>
@@ -358,10 +314,10 @@ const Product = () => {
                   ></path>
                 </svg>
               </div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mt-5">Delete Product</h3>
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mt-5">Delete user</h3>
               <div className="mt-2 px-7 py-3">
                 <p className="text-sm text-gray-500">
-                  Are you sure you want to delete this product? This action cannot be undone.
+                  Are you sure you want to delete this user? This action cannot be undone.
                 </p>
               </div>
               <div className="flex justify-center mt-3 space-x-3">
@@ -372,7 +328,7 @@ const Product = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => deleteProduct(productToDelete._id)}
+                  onClick={() => deleteUser(userToDelete._id)}
                   className="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   Delete
@@ -386,4 +342,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default UserManagement;

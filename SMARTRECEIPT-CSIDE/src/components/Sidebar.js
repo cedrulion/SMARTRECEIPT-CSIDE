@@ -36,9 +36,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/dashboardd"
               onClick={() => handleItemClick('/dashboard/dashboardd')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/dashboardd' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/dashboardd' ? '4px solid #8155ff' : '',
@@ -49,9 +48,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/list"
               onClick={() => handleItemClick('/dashboard/list')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/list' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/list' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/list' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/list' ? '4px solid #8155ff' : '',
@@ -62,9 +60,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/blist"
               onClick={() => handleItemClick('/dashboard/blist')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/blist' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/blist' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/blist' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/blist' ? '4px solid #8155ff' : '',
@@ -75,9 +72,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/message"
               onClick={() => handleItemClick('/dashboard/transactions')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/transactions' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/transactions' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/transactions' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/transactions' ? '4px solid #8155ff' : '',
@@ -87,14 +83,13 @@ const Sidebar = ({ onClose }) => {
             </Link>
           </>
         )}
-{userRole === 'EMPLOYEE' && (
+        {userRole === 'EMPLOYEE' && (
           <>
-           <Link
+            <Link
               to="/dashboard/eproduct"
               onClick={() => handleItemClick('/dashboard/product-catalog')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/product-catalog' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/product-catalog' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/product-catalog' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/product-catalog' ? '4px solid #8155ff' : '',
@@ -105,9 +100,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/etransactions"
               onClick={() => handleItemClick('/dashboard/etransactions')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/etransactions' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/etransactions' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/etransactions' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/etransactions' ? '4px solid #8155ff' : '',
@@ -115,13 +109,12 @@ const Sidebar = ({ onClose }) => {
             >
               <FaReceipt className="mr-3" /> Transactions
             </Link>
-           
-             <Link
+
+            <Link
               to="/dashboard/payment"
               onClick={() => handleItemClick('/dashboard/payment')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/payment' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/payment' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/payment' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/payment' ? '4px solid #8155ff' : '',
@@ -136,9 +129,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/dashboardd"
               onClick={() => handleItemClick('/dashboard/dashboardd')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/dashboardd' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/dashboardd' ? '4px solid #8155ff' : '',
@@ -149,9 +141,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/transactions"
               onClick={() => handleItemClick('/dashboard/transactions')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/transactions' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/transactions' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/transactions' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/transactions' ? '4px solid #8155ff' : '',
@@ -162,9 +153,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/product"
               onClick={() => handleItemClick('/dashboard/product-catalog')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/product-catalog' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/product-catalog' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/product-catalog' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/product-catalog' ? '4px solid #8155ff' : '',
@@ -175,9 +165,8 @@ const Sidebar = ({ onClose }) => {
             <Link
               to="/dashboard/info"
               onClick={() => handleItemClick('/dashboard/info')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/info' ? 'bg-gray-200' : ''
-              }`}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/info' ? 'bg-gray-200' : ''
+                }`}
               style={{
                 paddingRight: activeItem === '/dashboard/info' ? '85px' : '',
                 borderLeft: activeItem === '/dashboard/info' ? '4px solid #8155ff' : '',
@@ -186,17 +175,16 @@ const Sidebar = ({ onClose }) => {
               <FaCogs className="mr-3" /> Business Information
             </Link>
             <Link
-              to="/dashboard/report"
-              onClick={() => handleItemClick('/dashboard/report')}
-              className={`flex items-center p-2 mt-5 ${
-                activeItem === '/dashboard/report' ? 'bg-gray-200' : ''
-              }`}
+              to="/dashboard/users"
+              onClick={() => handleItemClick('/dashboard/users')}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/users' ? 'bg-gray-200' : ''
+                }`}
               style={{
-                paddingRight: activeItem === '/dashboard/report' ? '85px' : '',
-                borderLeft: activeItem === '/dashboard/report' ? '4px solid #8155ff' : '',
+                paddingRight: activeItem === '/dashboard/users' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/users' ? '4px solid #8155ff' : '',
               }}
             >
-              <FaChartLine className="mr-3" /> Report
+              <FaChartLine className="mr-3" /> Manage users
             </Link>
           </>
         )}

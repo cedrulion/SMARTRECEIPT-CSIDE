@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast,ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useLocation,useNavigate } from 'react-router-dom';
 const Information = () => {
+  const location = useLocation();
+  const data = location.state;
+  const navigate=useNavigate()
   const [initialValues, setInitialValues] = useState({
     basicInformation: '',
     businessCategory: '',
@@ -14,55 +15,15 @@ const Information = () => {
     businessTINNumber: '',
   });
 
-  useEffect(() => {
-    const fetchBusinessInformation = async () => {
-      const token = localStorage.getItem('token');
-      try {
-        const response = await axios.get('http://localhost:5000/api/business/info', {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        });
 
-        if (response.status === 200) {
-          setInitialValues({
-            basicInformation: response.data.basicInformation,
-            businessCategory: response.data.businessCategory,
-            businessName: response.data.businessName,
-            businessLocation: response.data.businessLocation,
-            businessTINNumber: response.data.businessTINNumber,
-          });
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        toast.error('Server error');
-      }
-    };
-
-    fetchBusinessInformation();
-  }, []);
-
-  const validationSchema = Yup.object().shape({
-    basicInformation: Yup.string().required('Business basic information is required'),
-    businessCategory: Yup.string().required('Business category is required'),
-    businessName: Yup.string().required('Business name is required'),
-    businessLocation: Yup.string().required('Business map location is required'),
-    businessTINNumber: Yup.string().required('Business TIN number is required'),
-  });
-
-  const onSubmit = async (values) => {
-    const token = localStorage.getItem('token');
+  const onSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/business/add', values, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-      });
-
+      const response = await axios.post('http://localhost:5000/api/business/add', { ...initialValues, user: data._id });
+      console.log(response.status);
       if (response.status === 200) {
         toast.success('Business information added successfully!');
+        navigate("/login")
       } else {
         toast.error('Failed to add business information');
       }
@@ -72,103 +33,91 @@ const Information = () => {
     }
   };
 
-  const formik = useFormik({
-    initialValues,
-    enableReinitialize: true,
-    validationSchema,
-    onSubmit,
-  });
-
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-6">Business Information</h2>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <form onSubmit={formik.handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block text-gray-700">Business Basic Information</label>
-              <textarea
-                name="basicInformation"
-                value={formik.values.basicInformation}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.basicInformation && formik.errors.basicInformation ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Product description comes here for you to add details to stimulate purchase."
-                rows="4"
-              />
-              {formik.touched.basicInformation && formik.errors.basicInformation ? (
-                <div className="text-red-500">{formik.errors.basicInformation}</div>
-              ) : null}
-            </div>
+    <div style={{ backgroundColor: "#F3F4F6", height: "100vh" }}>
+      <div className="max-w-4xl mx-auto p-4">
+        <h2 className="text-2xl font-semibold mb-6">Create business profile</h2>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <form>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-gray-700">Business Basic Information</label>
+                <textarea
+                  name="basicInformation"
+                  value={initialValues.basicInformation}
+                  onChange={(e) => setInitialValues({ ...initialValues, basicInformation: e.target.value })}
+                  className={`w-full border rounded-lg p-2 mt-1 ${!initialValues.basicInformation ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Product description comes here for you to add details to stimulate purchase."
+                  rows="4"
+                />
+                {!initialValues.basicInformation && <div className="text-red-500">Business basic information is required</div>}
+              </div>
 
-            <div>
-              <label className="block text-gray-700">Business Category</label>
-              <input
-                type="text"
-                name="businessCategory"
-                value={formik.values.businessCategory}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessCategory && formik.errors.businessCategory ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Enter business category"
-              />
-              {formik.touched.businessCategory && formik.errors.businessCategory ? (
-                <div className="text-red-500">{formik.errors.businessCategory}</div>
-              ) : null}
+              <div>
+                <label className="block text-gray-700">Business Category</label>
+                <select
+                  name="businessCategory"
+                  value={initialValues.businessCategory}
+                  onChange={(e) => setInitialValues({ ...initialValues, businessCategory: e.target.value })}
+                  className={`w-full border rounded-lg p-2 mt-1 ${!initialValues.businessCategory ? 'border-red-500' : 'border-gray-300'}`}
+                >
+                  <option value="" label="Select business category" />
+                  <option value="LARGE" label="Large" />
+                  <option value="MEDIUM" label="Medium" />
+                  <option value="SMALL" label="Small" />
+                </select>
+                {!initialValues.businessCategory && <div className="text-red-500">Business category is required</div>}
+              </div>
+
+              <div>
+                <label className="block text-gray-700">Business Name</label>
+                <input
+                  type="text"
+                  name="businessName"
+                  value={initialValues.businessName}
+                  onChange={(e) => setInitialValues({ ...initialValues, businessName: e.target.value })}
+                  className={`w-full border rounded-lg p-2 mt-1 ${!initialValues.businessName ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Enter business name"
+                />
+                {!initialValues.businessName && <div className="text-red-500">Business name is required</div>}
+              </div>
+
+              <div>
+                <label className="block text-gray-700">Business Location</label>
+                <input
+                  type="text"
+                  name="businessLocation"
+                  value={initialValues.businessLocation}
+                  onChange={(e) => setInitialValues({ ...initialValues, businessLocation: e.target.value })}
+                  className={`w-full border rounded-lg p-2 mt-1 ${!initialValues.businessLocation ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Enter business map location"
+                />
+                {!initialValues.businessLocation && <div className="text-red-500">Business map location is required</div>}
+              </div>
+
+              <div>
+                <label className="block text-gray-700">Business TIN Number</label>
+                <input
+                  type="text"
+                  name="businessTINNumber"
+                  value={initialValues.businessTINNumber}
+                  onChange={(e) => setInitialValues({ ...initialValues, businessTINNumber: e.target.value })}
+                  className={`w-full border rounded-lg p-2 mt-1 ${!initialValues.businessTINNumber ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="Enter business TIN number"
+                />
+                {!initialValues.businessTINNumber && <div className="text-red-500">Business TIN number is required</div>}
+              </div>
             </div>
-            <div>
-              <label className="block text-gray-700">Business Name</label>
-              <input
-                type="text"
-                name="businessName"
-                value={formik.values.businessName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessName && formik.errors.businessName ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Enter business name"
-              />
-              {formik.touched.businessName && formik.errors.businessName ? (
-                <div className="text-red-500">{formik.errors.businessName}</div>
-              ) : null}
-            </div>
-            <div>
-              <label className="block text-gray-700">Business Map Location</label>
-              <input
-                type="text"
-                name="businessLocation"
-                value={formik.values.businessLocation}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessLocation && formik.errors.businessLocation ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Enter business map location"
-              />
-              {formik.touched.businessLocation && formik.errors.businessLocation ? (
-                <div className="text-red-500">{formik.errors.businessLocation}</div>
-              ) : null}
-            </div>
-            <div>
-              <label className="block text-gray-700">Business TIN Number</label>
-              <input
-                type="text"
-                name="businessTINNumber"
-                value={formik.values.businessTINNumber}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full border rounded-lg p-2 mt-1 ${formik.touched.businessTINNumber && formik.errors.businessTINNumber ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Enter business TIN number"
-              />
-              {formik.touched.businessTINNumber && formik.errors.businessTINNumber ? (
-                <div className="text-red-500">{formik.errors.businessTINNumber}</div>
-              ) : null}
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:bg-purple-700 mt-4"
-          >
-            Submit
-          </button>
-        </form>
+            <button
+              type="submit"
+              onClick={onSubmit}
+              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 focus:outline-none focus:bg-purple-700 mt-4"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+        <ToastContainer/>
       </div>
     </div>
   );

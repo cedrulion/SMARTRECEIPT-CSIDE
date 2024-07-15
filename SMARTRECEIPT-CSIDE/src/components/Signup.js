@@ -79,7 +79,7 @@ const Signup = () => {
                 const response = await axios.post('http://localhost:5000/api/user/signup', formValues);
                 if (response.status === 200) {
                     toast.success('Signup successful!');
-                    navigate('/login');
+                    navigate('/signup/information', { state: response.data.data });
                 } else {
                     toast.error(response.data.message || 'Signup failed');
                 }
@@ -225,7 +225,7 @@ const Signup = () => {
                     </form>
                     <p className="text-center mt-4">
                         <span className='text-black font-medium'>Already have an account?{' '}</span>
-                        <Link to="/signup" className="text-purple-600 hover:underline">
+                        <Link to="/login" className="text-purple-600 hover:underline">
                             Sign in
                         </Link>
                     </p>

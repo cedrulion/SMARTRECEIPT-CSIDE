@@ -39,6 +39,12 @@ const HeaderComponent = ({ page, logout }) => {
                     <p className='text-sm text-gray-500'>Reporting</p>
                 </div>
             </div>
+            <div className="px-4 py-3 cursor-pointer hover:bg-gray-100"  onClick={handleReportingClick}>
+                <div className='flex flex-row items-center'>
+                <i className="fa-solid fa-lock mr-2"></i>
+                    <p className='text-sm text-gray-500'>Change password</p>
+                </div>
+            </div>
             <div className="px-4 py-3 cursor-pointer hover:bg-gray-100" onClick={() => logout()}>
                 <div className='flex flex-row items-center'>
                     <i className="fa-solid fa-right-from-bracket mr-2"></i>

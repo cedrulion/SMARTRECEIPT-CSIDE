@@ -64,6 +64,7 @@ const Login = () => {
           const { token } = response.data;
           localStorage.setItem('token', token);
           localStorage.setItem('loggedInUser', JSON.stringify(response.data.loggedInUser)); // Store loggedInUser
+          localStorage.setItem('user', JSON.stringify(response.data.user));
           toast.success('Login successful!');
           navigate('/dashboard/dashboardd');
         } else {
@@ -85,7 +86,7 @@ const Login = () => {
         <div className="flex items-center justify-center mb-8 ">
           <img src={Frame} alt="logo" className="w-full h-auto object-cover rounded-lg shadow-md" />
         </div>
-        <div className="bg-white rounded-lg shadow-md m-9 p-6 border rounded-xl  border-purple-300">
+        <div className="bg-white rounded-lg shadow-md m-9 p-6 border rounded-xl  border-purple-300" >
           <h2 className="text-2xl font-bold text-center mb-4">Welcome back</h2>
           <p className="text-center text-gray-600 mb-8">Enter details to log in and continue</p>
           <form onSubmit={handleSubmit}>
@@ -137,12 +138,6 @@ const Login = () => {
                 <div className="text-red-500 text-sm mt-0">{formErrors.password}</div>
               )}
             </div>
-            <div className="flex justify-between items-center mb-4">
-              <div></div>
-              <a href="#" className="text-sm text-purple-600 hover:underline">
-                Forgot password?
-              </a>
-            </div>
             <button
               type="submit"
               className={`w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:bg-purple-700 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
@@ -156,6 +151,12 @@ const Login = () => {
             <span className='text-black font-medium'>Don't have an account?{' '}</span>
             <Link to="/signup" className="text-purple-600 hover:underline">
               Sign up
+            </Link>
+          </p>
+          <p className="text-center mt-4">
+            <span className='text-black font-medium'>Account not activated?{' '}</span>
+            <Link to="/activate-account" className="text-purple-600 hover:underline">
+              Activate
             </Link>
           </p>
           <div className="mt-6">

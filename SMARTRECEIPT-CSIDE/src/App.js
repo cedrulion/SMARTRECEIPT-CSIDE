@@ -20,39 +20,45 @@ import TransactionList from './components/TransactionList';
 import BusinessList from './components/BusinessList';
 import Fail from './components/Fail';
 import Success from './components/Success';
-import NewLogin from './components/newLogin';
- import Notification from './components/Notification';
+import InformationDetails from './components/Information copy';
+import Notification from './components/Notification';
+import UserManagement from './components/users';
+import ActivateAccount from './components/activateAccount';
 
 function App() {
   return (
     <Router>
-       <Routes>
-       <Route  path="/" element={<Login/>} ></Route>
-       
-        <Route  path="/login" element={<Login/>} ></Route>
-        <Route  path="/signup" element={<Signup/>} ></Route>
-        <Route  path="/rra" element={<Login/>} ></Route>
-        
-        <Route  path="/nav" element={<Navbar/>} ></Route>
-        <Route  path="/sidebar" element={<Sidebar/>} ></Route>
-       
-       
-        <Route  path="/dashboard" element={<DashboardLayout/>} >
-        <Route  path="transactions" element={<Transactions/>} />
-        <Route  path="etransactions" element={<Etransactions/>} />
-        <Route  path="dashboardd" element={<Dashboard/>} />
-        <Route  path="message" element={<Message/>} />
-        <Route  path="info" element={<Information/>} />
-        <Route  path="product" element={<Product/>} />
-         <Route  path="eproduct" element={<Eproduct/>} />
-        <Route  path="payment" element={<Payment/>} />
-        <Route  path="list" element={<TransactionList/>} />
-        <Route  path="blist" element={<BusinessList/>} />
-         <Route  path="Success" element={<Success/>} />
-        <Route  path="Fail" element={<Fail/>} />
-         <Route  path="Notification" element={<Notification/>} />
+      <Routes>
+        <Route path="/" element={<Login />} ></Route>
+
+        <Route path="/login" element={<Login />} ></Route>
+        <Route path="/activate-account" element={<ActivateAccount />} ></Route>
+        <Route path="/signup" element={<Signup />}>
         </Route>
-        </Routes>
+        <Route path="/signup/information" element={<Information />} />
+        <Route path="/rra" element={<Login />} ></Route>
+
+        <Route path="/nav" element={<Navbar />} ></Route>
+        <Route path="/sidebar" element={<Sidebar />} ></Route>
+
+
+        <Route path="/dashboard" element={<DashboardLayout />} >
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="etransactions" element={<Etransactions />} />
+          <Route path="dashboardd" element={<Dashboard />} />
+          <Route path="message" element={<Message />} />
+          <Route path="info" element={<InformationDetails />} />
+          <Route path="product" element={<Product />} />
+          <Route path="eproduct" element={<Eproduct />} />
+          <Route path="payment" element={<Payment />} />
+          <Route path="list" element={<TransactionList />} />
+          <Route path="blist" element={<BusinessList />} />
+          <Route path="Success" element={<Success />} />
+          <Route path="Fail" element={<Fail />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="Notification" element={<Notification />} />
+        </Route>
+      </Routes>
     </Router>
   );
 }
