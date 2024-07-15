@@ -84,7 +84,7 @@ const Payment = () => {
   return (
     <div className="flex-1 p-6 ">
       <ToastContainer />
-      <h1 className="text-2xl font-bold">Payment processing</h1>
+      <h1 className="text-2xl font-bold mb-4">Payment processing</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (

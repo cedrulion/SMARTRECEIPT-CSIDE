@@ -85,6 +85,18 @@ const Sidebar = ({ onClose }) => {
         )}
         {userRole === 'EMPLOYEE' && (
           <>
+          <Link
+              to="/dashboard/edashboard"
+              onClick={() => handleItemClick('/dashboard/dashboardd')}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
+                }`}
+              style={{
+                paddingRight: activeItem === '/dashboard/dashboardd' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/dashboardd' ? '4px solid #8155ff' : '',
+              }}
+            >
+              <FaHome className="mr-3" /> Dashboard
+            </Link>
             <Link
               to="/dashboard/eproduct"
               onClick={() => handleItemClick('/dashboard/product-catalog')}

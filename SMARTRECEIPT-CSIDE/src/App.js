@@ -24,6 +24,7 @@ import InformationDetails from './components/Information copy';
 import Notification from './components/Notification';
 import UserManagement from './components/users';
 import ActivateAccount from './components/activateAccount';
+import EmployeeDashboard from './components/eDashboard';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="info" element={<InformationDetails />} />
           <Route path="product" element={<Product />} />
           <Route path="eproduct" element={<Eproduct />} />
+          <Route path="edashboard" element={<EmployeeDashboard />} />
           <Route path="payment" element={<Payment />} />
           <Route path="list" element={<TransactionList />} />
           <Route path="blist" element={<BusinessList />} />

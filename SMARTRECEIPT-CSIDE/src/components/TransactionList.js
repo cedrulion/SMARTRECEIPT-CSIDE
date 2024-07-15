@@ -1,38 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaCheckCircle, FaTimesCircle, FaHourglassHalf } from 'react-icons/fa'; // Importing icons
-
-const itemsPerPage = 5; // Number of items to display per page
-
-const getStatusIcon = (status) => {
-  switch (status) {
-    case 'succeeded':
-      return <FaCheckCircle className="text-green-500" />;
-    case 'failed':
-      return <FaTimesCircle className="text-red-500" />;
-    case 'pending':
-      return <FaHourglassHalf className="text-yellow-500" />;
-    default:
-      return null;
-  }
-};
+import * as XLSX from 'xlsx';
+import GenerateTransactionsPDF from '../helpers/pdf';
+import { FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaDownload, FaFileExport, FaCalendarAlt } from 'react-icons/fa';
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [originalTransactions, setOriginalTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/transaction/get', {
+        const response = await axios.get('http://localhost:5000/api/transaction/getall', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: token,
           },
         });
         setTransactions(response.data);
+        setOriginalTransactions(response.data); // Save original transactions
+        setFilteredTransactions(response.data); // Initialize filtered transactions
+        console.log(response.data);
       } catch (error) {
         console.error('Failed to fetch transactions:', error);
       }
@@ -41,101 +34,116 @@ const TransactionList = () => {
     fetchTransactions();
   }, []);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentTransactions = transactions.slice(indexOfFirstItem, indexOfLastItem);
+  // Update filteredTransactions when startDate or endDate changes
+  useEffect(() => {
+    filterTransactionsByDateRange(startDate, endDate);
+  }, [startDate, endDate]);
 
-  const nextPage = () => {
-    if (currentPage < Math.ceil(transactions.length / itemsPerPage)) {
-      setCurrentPage(currentPage + 1);
+  const filterTransactionsByDateRange = (start, end) => {
+    if (start && end) {
+      const filtered = originalTransactions.filter(transaction => {
+        const transactionDate = new Date(transaction.date);
+        return transactionDate >= new Date(start) && transactionDate <= new Date(end);
+      });
+      setFilteredTransactions(filtered);
+    } else {
+      // Reset to original transactions if startDate or endDate is empty
+      setFilteredTransactions(originalTransactions);
     }
   };
 
-  const previousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+  function exportTransactions() {
+    const headers = ["Customer name", "Business Name", "Date", "Total price"];
+    const data = filteredTransactions.map(transaction => ({
+        "Customer name": transaction.buyer?.username,
+        "Business Name": transaction.business?.businessName,
+        "Date": new Date(transaction.date).toLocaleDateString(),
+        "Total price": transaction.totalPrice
+    }));
+    const sheetData = [headers, ...data.map(Object.values)];
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Transactions');
+    XLSX.writeFile(workbook, 'transactions.xlsx');
+  }
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'succeeded':
+        return <span className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Active</span>;
+      case 'failed':
+        return <span className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded ">Failed</span>;
+      case 'pending':
+        return <span className="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Not active</span>;
+      default:
+        return null;
     }
   };
 
   return (
     <div className="container mx-auto p-4" style={{ fontFamily: 'inter' }}>
- 
+      <p className='mb-2'>Showing transaction for</p>
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-4">
-          <select className="border rounded p-2">
-            <option>Last month</option>
-            <option>This week</option>
-          </select>
-          <select className="border rounded p-2">
-            <option>This week</option>
-            <option>Last month</option>
-          </select>
+          <div className="relative">
+            <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="date"
+              className="border rounded p-2 pl-10"
+              placeholder="Start date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="relative">
+            <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="date"
+              className="border rounded p-2 pl-10"
+              placeholder="End date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
         </div>
         <div className="flex space-x-4">
-          <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
-            Export report
+          <button className="bg-white text-grey-500 border border-grey-500 rounded-lg p-2 hover:bg-blue-50 flex items-center"
+            onClick={() => exportTransactions()}
+          >
+            <FaFileExport className="mr-2" /> Export report
           </button>
-          <button className="bg-green-500 text-white rounded p-2 hover:bg-green-600">
-            Download
+          <button className="bg-white text-grey-500 border border-grey-500 rounded-lg p-2 hover:bg-blue-50 flex items-center"
+            onClick={() => GenerateTransactionsPDF(filteredTransactions)}
+          >
+            <FaDownload className="mr-2" /> Download
           </button>
         </div>
       </div>
-      <table className="min-w-full bg-white border border-gray-200 mt-4">
-        <thead>
-          <tr>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Name of Customer</th>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Product Name</th>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Quantity</th>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Amount</th>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Date</th>
-            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentTransactions.map((transaction) => (
-            <tr key={transaction._id}>
-              <td className="px-6 py-4 border-b border-gray-200">{transaction.buyer.username}</td>
-             <td className="border px-4 py-2">
-                    {transaction.products.map((product) => (
-                      <div key={product._id}>
-                        {product.product.name}
-                      </div>
-                    ))}
-                  </td>
-              <td className="border px-4 py-2">
-                    {transaction.products.map((product) => (
-                      <div key={product._id}>
-                        {product.quantity}
-                      </div>
-                    ))}
-                  </td>
-              <td className="px-6 py-4 border-b border-gray-200">{transaction.totalPrice}</td>
-              <td className="px-6 py-4 border-b border-gray-200">{new Date(transaction.date).toLocaleDateString()}</td>
-              <td className="px-6 py-4 border-b border-gray-200 flex ">
-                {getStatusIcon(transaction.status)} {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-              </td>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+            <tr>
+              <th scope="col" className="px-6 py-3">Customer name</th>
+              <th scope="col" className="px-6 py-3">Business name</th>
+              <th scope="col" className="px-6 py-3">Date</th>
+              <th scope="col" className="px-6 py-3">Amount</th>
+              <th scope="col" className="px-6 py-3">Total price</th>
+              <th scope="col" className="px-6 py-3">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={previousPage}
-          disabled={currentPage === 1}
-          className={`p-2 border rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-        >
-          Previous
-        </button>
-        <span className="p-2">
-          Page {currentPage} of {Math.ceil(transactions.length / itemsPerPage)}
-        </span>
-        <button
-          onClick={nextPage}
-          disabled={currentPage === Math.ceil(transactions.length / itemsPerPage)}
-          className={`p-2 border rounded ${currentPage === Math.ceil(transactions.length / itemsPerPage) ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-        >
-          Next
-        </button>
+          </thead>
+          <tbody>
+            {filteredTransactions.map((transaction, index) => (
+              <tr key={index} className="bg-white border-b hover:bg-gray-50">
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{transaction.buyer.username}</td>
+                <td className="px-6 py-4">{transaction.business.businessName}</td>
+                <td className="px-6 py-4">{new Date(transaction.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4">RWF {transaction.totalPrice.toFixed(2)}</td>
+                <td className="py-2 px-4 border-b">RWF {transaction.totalPrice}</td>
+                <td className="px-6 py-4">{getStatusIcon(transaction.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

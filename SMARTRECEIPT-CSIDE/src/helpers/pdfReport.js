@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import Logo from '../Assets/Logo.png';
+import { formatDate } from "./reportDateHelper";
 
 const generatePDF = (transactions) => {
   // Create a new jsPDF instance
