@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { FaHome, FaReceipt, FaBoxes, FaCogs, FaBell, FaChartLine } from 'react-icons/fa';
+import { FaHome, FaReceipt, FaBoxes, FaCogs, FaBell, FaChartLine, FaDashcube } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Frame from '../Assets/Frame.png';
 
-const Sidebar = ({ onClose }) => {
+const Sidebar = ({ onClose, trigger }) => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(null);
-  const [activeItem, setActiveItem] = useState("/dashboard/dashboardd");
+  const [activeItem, setActiveItem] = useState("");
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -26,6 +26,28 @@ const Sidebar = ({ onClose }) => {
     navigate(path);
     onClose();
   };
+
+  const handleDuplicateItemClick = (e, path) => {
+    e.preventDefault()
+    setActiveItem(path);
+    trigger()
+    onClose();
+  };
+  useEffect(() => {
+    const role = JSON.parse(localStorage.getItem("loggedInUser")).role
+    if (role === "EMPLOYEE") {
+      setActiveItem("/dashboard/dashboardd");
+      navigate("/dashboard/dashboardd");
+    }
+    if (role === "RRA") {
+      setActiveItem("/dashboard/dashboardd");
+      navigate("/dashboard/dashboardd");
+    }
+    if (role === "BUSINESS") {
+      setActiveItem("/dashboard/bdashboard");
+      navigate("/dashboard/bdashboard");
+    }
+  }, [])
 
   return (
     <div className="fixed top-0 bottom-0 left-0 w-56 shadow-lg" style={{ fontFamily: 'inter' }}>
@@ -85,7 +107,7 @@ const Sidebar = ({ onClose }) => {
         )}
         {userRole === 'EMPLOYEE' && (
           <>
-          <Link
+            <Link
               to="/dashboard/edashboard"
               onClick={() => handleItemClick('/dashboard/dashboardd')}
               className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
@@ -139,13 +161,13 @@ const Sidebar = ({ onClose }) => {
         {userRole === 'BUSINESS' && (
           <>
             <Link
-              to="/dashboard/dashboardd"
-              onClick={() => handleItemClick('/dashboard/dashboardd')}
-              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/dashboardd' ? 'bg-gray-200' : ''
+              to="/dashboard/bdashboard"
+              onClick={() => handleItemClick('/dashboard/bdashboard')}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/bdashboard' ? 'bg-gray-200' : ''
                 }`}
               style={{
-                paddingRight: activeItem === '/dashboard/dashboardd' ? '85px' : '',
-                borderLeft: activeItem === '/dashboard/dashboardd' ? '4px solid #8155ff' : '',
+                paddingRight: activeItem === '/dashboard/bdashboard' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/bdashboard' ? '4px solid #8155ff' : '',
               }}
             >
               <FaHome className="mr-3" /> Dashboard
@@ -197,6 +219,17 @@ const Sidebar = ({ onClose }) => {
               }}
             >
               <FaChartLine className="mr-3" /> Manage users
+            </Link>
+            <Link
+              onClick={(e) => handleDuplicateItemClick(e, '/dashboard/duplicates')}
+              className={`flex items-center p-2 mt-5 ${activeItem === '/dashboard/duplicates' ? 'bg-gray-200' : ''
+                }`}
+              style={{
+                paddingRight: activeItem === '/dashboard/duplicates' ? '85px' : '',
+                borderLeft: activeItem === '/dashboard/duplicates' ? '4px solid #8155ff' : '',
+              }}
+            >
+              <FaDashcube className="mr-3" /> Duplicate requests
             </Link>
           </>
         )}

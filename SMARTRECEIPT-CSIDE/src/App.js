@@ -1,5 +1,5 @@
 // client/src/App.js
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Login from './components/Login';
@@ -25,9 +25,11 @@ import Notification from './components/Notification';
 import UserManagement from './components/users';
 import ActivateAccount from './components/activateAccount';
 import EmployeeDashboard from './components/eDashboard';
+import BusinessDashboard from './components/bDashboard';
 
 function App() {
   return (
+    <>
     <Router>
       <Routes>
         <Route path="/" element={<Login />} ></Route>
@@ -40,7 +42,7 @@ function App() {
         <Route path="/rra" element={<Login />} ></Route>
 
         <Route path="/nav" element={<Navbar />} ></Route>
-        <Route path="/sidebar" element={<Sidebar />} ></Route>
+        {/* <Route path="/sidebar" element={<Sidebar />} ></Route> */}
 
 
         <Route path="/dashboard" element={<DashboardLayout />} >
@@ -52,6 +54,7 @@ function App() {
           <Route path="product" element={<Product />} />
           <Route path="eproduct" element={<Eproduct />} />
           <Route path="edashboard" element={<EmployeeDashboard />} />
+          <Route path="bdashboard" element={<BusinessDashboard />} />
           <Route path="payment" element={<Payment />} />
           <Route path="list" element={<TransactionList />} />
           <Route path="blist" element={<BusinessList />} />
@@ -62,6 +65,7 @@ function App() {
         </Route>
       </Routes>
     </Router>
+    </>
   );
 }
 

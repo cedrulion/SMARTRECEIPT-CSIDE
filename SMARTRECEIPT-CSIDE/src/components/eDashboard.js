@@ -9,7 +9,6 @@ import PercentageEmployeeSalesDoughnutChart from '../statisticsComponent/percent
 Chart.register(...registerables);
 
 const EmployeeDashboard = () => {
-  const [transactions, setTransactions] = useState([]);
   const [countsPerMonth, setCountsPerMonth] = useState(Array(12).fill(0));
   const [percentage, setPercentage] = useState({
     dataPresent: false,
@@ -74,7 +73,7 @@ const EmployeeDashboard = () => {
           sales: employeeStatsResponse.data.employeeSales.percentageChange,
           businessSales: employeeStatsResponse.data.businessSales.percentageChange
         })
-        setTransactions(transactionsResponse.data);
+        setCountsPerMonth(transactionsResponse.data.countsPerMonth.map(item => item.count));
         setLoading(false);
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -88,32 +87,6 @@ const EmployeeDashboard = () => {
 
     fetchTransactions();
   }, []);
-
-  useEffect(() => {
-    const fetchCountsPerMonth = async () => {
-      const token = localStorage.getItem('token');
-
-      try {
-        // Fetch transaction counts per month based on date range
-        const countsPerMonthResponse = await axios.get('http://localhost:5000/api/transaction/monthlyreport', {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          }
-        });
-        setCountsPerMonth(countsPerMonthResponse.data.countsPerMonth.map(item => item.count));
-        console.log(countsPerMonthResponse.data.countsPerMonth.map(item => item.count));
-
-      } catch (error) {
-        console.error('Error fetching counts per month:', error);
-      }
-    };
-
-
-    fetchCountsPerMonth();
-
-  }, []);
-
   if (loading) {
     return <div>Loading...</div>;
   }

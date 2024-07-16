@@ -221,34 +221,27 @@ const Etransactions = () => {
       });
       doc.save('transactions.pdf');
       toast.success('Receipt downloaded successfully');
+      fetchTransactions()
     }
   };
 
-  const handleExportTransactions = async (transactionId) => {
-    console.log('Exporting transactions for:', transactionId);
-    const count = await checkTransactionCount(transactionId);
-    if (count < 0) {
-      toast.error('Error fetching transaction count');
-    } else if (count > 0) {
-      toast.error('Duplicate transaction, cannot export');
-    } else {
-      await incrementTransactionCount(transactionId);
-      incrementNotificationCount();
-      const csvContent = transactions.map((transaction) =>
-        `${transaction.buyer.username},${transaction.products.map(p => p.product.name).join(';')},${transaction.products.map(p => p.quantity).join(';')},${transaction.totalPrice},${transaction.date},${transaction.status}`
-      ).join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'transactions.csv');
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success('Transactions exported successfully');
+  const requestDuplicateCopy = async (transactionDetails) => {
+    const business = JSON.parse(localStorage.getItem('user')).business
+    const transaction = transactionDetails._id
+    try {
+      const response = await axios.post(`http://localhost:5000/api/notification/send`, { business, transaction }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      })
+      toast.success('Request sent succesfully');
     }
-  };
+    catch (error) {
+      console.error('Failed to get transaction count', error);
+      toast.error('Failed to send request');
+    }
+  }
 
   const incrementNotificationCount = () => {
     console.log('Incrementing notification count');
@@ -311,11 +304,14 @@ const Etransactions = () => {
                         Detailed description
                       </button>
                       <button
-                        onClick={() => handleExportTransactions(transaction._id)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        disabled={transaction.count === 0}
+                        onClick={() => requestDuplicateCopy(transaction)}
+                        className={`px-4 py-2 rounded ${transaction.count === 0 ? 'bg-gray-200 text-gray-500' : 'bg-blue-500 text-white'
+                          }`}
                       >
-                        Export
+                        Request Duplicate Copy
                       </button>
+
                     </td>
                   </tr>
                 ))}
@@ -481,9 +477,9 @@ const Etransactions = () => {
                 </div>
               </div>
               <div className="flex items-center bg-green-100 px-2 py-1 rounded-full">
-                  <span className="text-xs font-semibold text-green-800 mr-1">Items:</span>
-                  <span className="text-sm font-bold text-green-900">{product.quantity}</span>
-                </div>
+                <span className="text-xs font-semibold text-green-800 mr-1">Items:</span>
+                <span className="text-sm font-bold text-green-900">{product.quantity}</span>
+              </div>
             </div>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
 
 const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
     const [data, setData] = useState({
@@ -15,7 +16,7 @@ const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
         const config = {
             headers: {
                 'Content-Type': "application/json",
-                'Authorization': JSON.parse(localStorage.getItem("token"))
+                'Authorization': localStorage.getItem("token")
             }
         };
         try {
@@ -23,6 +24,7 @@ const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
             const evaluate = response.data;
 
             if (evaluate.confirm == true) {
+                toast.success('Password retrieved successfull');
                 setErrorMsg("");
                 setShowConfirm(false);
             }
@@ -51,6 +53,7 @@ const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
                 oldpassword: ""
             });
             setErrorMsg("");
+            toast.success('Change password successful');
             toggleModal();
         } catch (error) {
             console.log(error);
@@ -71,7 +74,12 @@ const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
     return (
         <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${modalIsOpen ? 'block' : 'hidden'}`}>
             <div className="bg-white p-8 rounded-lg w-full max-w-md">
-                <h3 className="text-primary text-2xl mb-4">Change Password</h3>
+            <div className="flex justify-between items-center mb-4">
+          <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
+            <span>Change password</span>
+          </div>
+          <button onClick={toggleModal} className="text-2xl">&times;</button>
+        </div>
                 {errorMsg && (
                     <div className="alert alert-danger p-2 mb-4" role="alert">
                         <strong>{errorMsg}</strong>
@@ -107,17 +115,18 @@ const ChangeUserPasswordModal = ({ modalIsOpen, toggleModal }) => {
                     )}
                     {showConfirm && (
                         <div className="flex justify-end">
-                            <button type="button" className="btn-primary px-4 py-2 mt-4" onClick={checkPassword}>Confirm</button>
+                            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:bg-blue-800" onClick={checkPassword}>Confirm</button>
                         </div>
                     )}
                 </form>
                 <div className="flex justify-between mt-4">
                     <button type="button" className="btn-outline-danger px-4 py-2" onClick={cancel}>Cancel</button>
                     {!showConfirm && (
-                        <button type="button" className="btn-primary px-4 py-2" onClick={confirmChangePassword}>Change Password</button>
+                        <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 active:bg-blue-800" onClick={confirmChangePassword}>Change Password</button>
                     )}
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

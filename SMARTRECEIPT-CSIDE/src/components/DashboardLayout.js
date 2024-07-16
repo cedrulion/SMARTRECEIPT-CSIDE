@@ -3,12 +3,17 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { FaBars, } from 'react-icons/fa';
 import Navbar from './Navbar';
+import NotificationPanel from './duplicateNotifications';
 
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showTrigger, setShowTrigger] = useState(false);
+  const toggleTrigger = () => {
+      setShowTrigger(!showTrigger);
+  };
   const navigate = useNavigate();
 
   const handleItemClick = (path) => {
@@ -29,8 +34,9 @@ const DashboardLayout = () => {
   };
 
   return (
+    <>
     <div className="">
-      {isSidebarOpen && <Sidebar onClose={toggleSidebar} />}
+      {isSidebarOpen && <Sidebar onClose={toggleSidebar} trigger={toggleTrigger} />}
 
       <div className={`flex-grow ${isSidebarOpen ? 'ml-56' : 'ml-0'}`}>
         <div className='font-roboto'>
@@ -39,9 +45,9 @@ const DashboardLayout = () => {
           </div>
       
       </div>
-      
-  
     </div>
+    <NotificationPanel show={showTrigger} onClose={toggleTrigger} />
+    </>
   );
 };
 
